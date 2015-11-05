@@ -1,63 +1,130 @@
 There are two ways of receive a trigger notification: Local and Remote. In the SDK `configure` method, you can choose to receive just one of the two types or both.
 
-## Local Trigger
-
-Local trigger use broadcast to notify the application that a trigger has occurred.
-To implement this feature you need to:
-
-  1. Register a receiver in the `AndroidManifest.xml` file.
-  2. Extend a BroadcastReceiver class and implement the `onReceive()` method. 
-
-
-### Register a receiver
-
-To register a receiver you need to add the following lines in the `AndroidManifest.xml` file:
-
-```
-<receiver
-    android:name=".MyReceiver"
-    android:exported="true" >
-    <intent-filter>
-        <action android:name="com.taqtile.tqgeolocationsdk.LOCAL_TRIGGER">
-        </action>
-    </intent-filter>
-</receiver>
-```
-
-`MyReceiver` is the name of the class that extends BroadcastReceiver and which will implement the `onReceive` method.
-
-### Extend BroadcastReceiver class
-
-To receive the local trigger, you must extend a BroadcastReceiver class and implement the `onReceive()` method. This is a example of a class that receive the Intent broadcast in the `onReceive` method:
-
-```
-public class MyReceiver extends BroadcastReceiver {
-    public MyReceiver() {
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        // This method is called when the BroadcastReceiver is receiving
-        // an Intent broadcast.
-        String deviceId = intent.getStringExtra("decideId");
-        String fenceId = intent.getStringExtra("fenceId");
-        int timestamp = intent.getIntExtra("timestamp", 0);
-        String fenceName = intent.getStringExtra("fenceName");
-        String event = intent.getStringExtra("event");
-    }
-}
-```
-
-The Intent broadcast has the following extra fields:
-
- - `deviceId`: (String) - The unique device id.
- - `fenceId`: (String) - The fence id in which the trigger has ococcurred.
- - `timestamp`: (int) - The unix time stamp
- - `fenceName`: (String) - The fence name in which the trigger has ococcurred.
- - `event`: (String) - The trigger type: enter, exit or linger.
-
+| Mode | Description |
+|---|---|
+| LocalOnly | Only a local trigger will be sent |
+| RemoteOnly | Only a remote trigger will be sent to the Geolocation Server |
+| Both | A local and a remote trigger will be sent |
 
 ## Remote Trigger
 
 The remote trigger send all the trigger data to the TQG server.
+
+## Local Trigger
+
+Local trigger use delegate function to notify the application that a trigger has occurred.
+To implement this feature you need to:
+
+  1. Add the protocol to the class declaration.
+  2. Implement the the `TQGeoTrackerOnFenceTriggered` method. 
+  3. Set the delegate using the `setDelegate` method
+
+
+### Add Protocol
+
+You must add the protocol to the class declaration:
+
+Swift:
+```
+class AppDelegate: ..., TQGeoTrackerDelegate { ... } 
+```
+
+Objective-C:
+```
+@interface MyClass : ... <TQGeoTrackerDelegate>
+```
+
+
+### Implement Protocol Method
+
+To receive the local trigger, you must implement the protocol method `TQGeoTrackerOnFenceTriggered`. This is an implementation example:
+
+Swift:
+```
+func TQGeoTrackerOnFenceTriggered(tqGeoTracker: TQGeoTracker, trigger: TQTrigger) {
+        TQGeoTracker.sharedInstance.log("OnFenceTriggered - fenceName: \(trigger.getFenceName()) fenceId: \(trigger.getFenceId()) type: \(trigger.getEvent())")
+        
+        if(UIApplication.sharedApplication().applicationState == UIApplicationState.Active) {
+            
+            let hud = MBProgressHUD.showHUDAddedTo(self.window, animated: true)
+            
+            hud.customView = UIImageView(image: UIImage(named: "NotificationCheckMark.png"))
+            
+            // Set custom view mode
+            hud.mode = MBProgressHUDMode.CustomView;
+            
+            hud.labelText = trigger.getEvent();
+            hud.detailsLabelText = trigger.getFenceName();
+            
+            
+            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(3 * Double(NSEC_PER_SEC)))
+            dispatch_after(delayTime, dispatch_get_main_queue()) {
+
+                MBProgressHUD.hideAllHUDsForView(self.window, animated: true)
+                return
+            }
+            
+
+        } else {
+            
+            //Send local notification
+            let notification = UILocalNotification()
+            notification.fireDate = NSDate()
+            notification.alertBody = "fenceName: \(trigger.getFenceName()) fenceId: \(trigger.getFenceId()) type: \(trigger.getEvent())"
+            UIApplication.sharedApplication().scheduleLocalNotification(notification)
+            
+        }
+    }
+```
+
+Objective-C:
+```
+-(void)TQGeoTrackerOnFenceTriggered:(TQGeoTracker *)tqGeoTracker trigger:(TQTrigger *)trigger {
+    [[TQGeoTracker sharedInstance] log:[NSString stringWithFormat:@"OnFenceTriggered - fenceName: %@ fenceId: %@ type: %@", trigger.getFenceName, trigger.getFenceId, trigger.getEvent]];
+    
+    if([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.window animated:YES];
+        
+        hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotificationCheckMark.png"]];
+        
+        // Set custom view mode
+        hud.mode = MBProgressHUDModeCustomView;
+        
+        hud.labelText = trigger.getEvent;
+        hud.detailsLabelText = trigger.getFenceName;
+        
+        dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC));
+        dispatch_after(delayTime, dispatch_get_main_queue(), ^{
+            
+            [MBProgressHUD hideAllHUDsForView:self.window animated:YES];
+            
+        });
+        
+        
+    } else {
+        
+        //Send local notification
+        UILocalNotification *notification = [[UILocalNotification alloc] init];
+        notification.fireDate = [[NSDate alloc] init];
+        notification.alertBody = [NSString stringWithFormat:@"fenceName: %@ fenceId: %@ type: %@", trigger.getFenceName, trigger.getFenceId, trigger.getEvent];
+        [[UIApplication sharedApplication] scheduleLocalNotification: notification];
+    }
+    
+}
+```
+
+### Set the Delegate
+
+You must set in the SDK which class will implement the delegate method:
+
+Swift:
+```
+TQGeoTracker.sharedInstance.setTriggerDelegate(self)
+```
+
+Objective-C:
+```
+[[TQGeoTracker sharedInstance] setTriggerDelegate:self];
+```
 
