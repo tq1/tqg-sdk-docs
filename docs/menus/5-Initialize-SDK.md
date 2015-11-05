@@ -10,7 +10,7 @@ This configuration are set by calling the following methods:
 TQGeoTracker.sharedInstance().configure(getApplicationContext(), <APP_ID>, TQGeoTracker.TriggerMode.<TRIGGER_MODE>, TQGeoTracker.TQEnvironment.<ENVIRONMENT>);
 ```
 
-You can configure with TRIGGER_MODE and TRIGGER_MODE default values (BOTH AND PRODUCTION):
+You can configure with TRIGGER_MODE and ENVIRONMENT default values (BOTH AND PRODUCTION):
 
 ```
 TQGeoTracker.sharedInstance().configure(getApplicationContext(), <APP_ID>);
