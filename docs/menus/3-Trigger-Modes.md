@@ -17,7 +17,7 @@ To implement this feature you need to:
 
   1. Add the protocol to the class declaration.
   2. Implement the the `TQGeoTrackerOnFenceTriggered` method. 
-  3. Set the delegate using the `setDelegate` method
+  3. Set the delegate using the `setTriggerDelegate` method
 
 
 ### Add Protocol
@@ -46,21 +46,15 @@ func TQGeoTrackerOnFenceTriggered(tqGeoTracker: TQGeoTracker, trigger: TQTrigger
         
         if(UIApplication.sharedApplication().applicationState == UIApplicationState.Active) {
             
-            let hud = MBProgressHUD.showHUDAddedTo(self.window, animated: true)
+            let alertController = UIAlertController(title: trigger.getEvent(), message: trigger.getFenceName(), preferredStyle: .Alert)
             
-            hud.customView = UIImageView(image: UIImage(named: "NotificationCheckMark.png"))
-            
-            // Set custom view mode
-            hud.mode = MBProgressHUDMode.CustomView;
-            
-            hud.labelText = trigger.getEvent();
-            hud.detailsLabelText = trigger.getFenceName();
+            self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
             
             
             let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(3 * Double(NSEC_PER_SEC)))
             dispatch_after(delayTime, dispatch_get_main_queue()) {
 
-                MBProgressHUD.hideAllHUDsForView(self.window, animated: true)
+                alertController.dismissViewControllerAnimated(true, completion: nil)
                 return
             }
             
@@ -84,20 +78,15 @@ Objective-C:
     
     if([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
 
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.window animated:YES];
-        
-        hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotificationCheckMark.png"]];
-        
-        // Set custom view mode
-        hud.mode = MBProgressHUDModeCustomView;
-        
-        hud.labelText = trigger.getEvent;
-        hud.detailsLabelText = trigger.getFenceName;
-        
+        UIAlertController * alert=   [UIAlertController
+                                    alertControllerWithTitle:trigger.getEvent
+                                    message:trigger.getFenceName
+                                    preferredStyle:UIAlertControllerStyleAlert];
+
         dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC));
         dispatch_after(delayTime, dispatch_get_main_queue(), ^{
             
-            [MBProgressHUD hideAllHUDsForView:self.window animated:YES];
+            [alert dismissViewControllerAnimated:YES completion:nil];
             
         });
         
