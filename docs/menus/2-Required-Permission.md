@@ -33,3 +33,8 @@ NOTE: The following methods don't need to be called to use the TQG, but you must
 - ```isLocationNotAuthorized```;
 - ```askForStoragePermission```;
 - ```isStorageAuthorized```.
+
+### Google Play Services Dependencies
+
+- ```com.google.android.gms:play-services-maps:8.4.0```
+- ```com.google.android.gms:play-services-location:8.4.0```
