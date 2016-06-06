@@ -1,9 +1,9 @@
 To install the TQG SDK, take the following steps:
 
-0. Make sure you are using CocoaPods v0.39.0 and open your Podfile
-0. Add `source 'https://github.com/indigotech/Specs.git'` to the top
-0. Before adding the TQGeolocationSDK, please make sure your Podfile is working. Erase your project DerivedData folder, clean the project and run pod install. If the project can build and run, go to the next step
-0. Add the following to your Podfile (sources: https://github.com/CocoaPods/CocoaPods/issues/3646, https://github.com/CocoaPods/CocoaPods/issues/4331):
+- Make sure you are using CocoaPods v0.39.0 and open your Podfile
+- Add `source 'https://github.com/indigotech/Specs.git'` to the top
+- Before adding the TQGeolocationSDK, please make sure your Podfile is working. Erase your project DerivedData folder, clean the project and run pod install. If the project can build and run, go to the next step
+- Add the following to your Podfile (sources: https://github.com/CocoaPods/CocoaPods/issues/3646, https://github.com/CocoaPods/CocoaPods/issues/4331):
 
 ```ruby
 target 'Your_Target_Name' do
@@ -23,7 +23,7 @@ target 'Your_Target_Name' do
   end
 end
 ```
-0. Run pod install
+- Run pod install
 
 Possible build errors:
 
@@ -32,7 +32,7 @@ You must, after adding use_frameworks!, change all your imports that refer to Po
 For instance:
 Change: `#import “TQTStylesheets.h”`
 To: `#import <TQTStylesheets/TQTStylesheets.h>`
-NOTE: It doesn't apply for the TQ1SDK Pod, since this Pod uses a static library. So just use, for exemple: `#import <TQ1Inbox.h>`
+NOTE: It doesn't apply for the TQ1SDK Pod, since this Pod uses a static library. So just use, for example: `#import <TQ1Inbox.h>`
 
 0. After changing the imports to the format specified above, you receive the error: `'TQTStylesheets/TQTStylesheets.h' file not found`. 
 This error also happens if you use "link_with" in your Podfile. Since "link_with" was introduced only in Pods 0.39, and will be discontinued in Pods 1.0.0 (replaced by abstract_target), the solution is to just organize your Podfile without using "link_with".
@@ -43,6 +43,6 @@ This error also happens if you use "link_with" in your Podfile. Since "link_with
   Reason: image not found`
 To solve this, open your build settings and search for the entry "Embedded Content Contains Swift Code". Set it to YES. By setting this option, you add some dylib needed by Swift to your build, such as "libswiftUIKit.dylib", shown in the error message.
 More information here: https://developer.apple.com/library/ios/qa/qa1881/_index.html
-NOTE: This problem was reported with when using cocoapods 0.39.0.beta.4, but didn't happen for 0.39.0.
+NOTE: This problem was reported when using cocoapods 0.39.0.beta.4, but didn't happen for 0.39.0.
 
 You can import the framework by using the following line: `#import <TQGeolocationSDK/TQGeolocationSDK-Swift.h>`
