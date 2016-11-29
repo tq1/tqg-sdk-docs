@@ -22,8 +22,21 @@ This will open a pop-up window asking for permission. The app should handle the 
 
 NOTE: The following methods don't need to be called to use the TQG, but you must ensure that the authorization has been allowed by the user:
 
-- ```askForLocationPermission```;
-- ```isLocationNotAuthorized```.
+- `askForLocationPermission`;
+- `isLocationNotAuthorized`.
+
+### External Storage permisison
+
+If you are going to display our fences map or export the logs via e-mail, then you need to ask for storage permission. First, add this to the manifest:
+
+```
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+```
+
+Then, you need to ask explicitly for this permission. You have the option to use one of TQG built-in methods:
+
+- `askForStoragePermission`;
+- `isStorageAuthorized`.
 
 ### Google Play Services Dependencies
 
