@@ -1,13 +1,5 @@
 ## Specify Android Permissions
 
-Specify the permissions your application needs, by adding <uses-permission> elements as children of the <manifest> element in AndroidManifest.xml.
-
-You must request the android.permission.WRITE_EXTERNAL_STORAGE permission.
-
-```
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-```
-
 The following permissions are defined in the TQG SDK manifest, and are automatically merged into your app's manifest at build time. You don't need to add them explicitly to your manifest:
 
  - android.permission.INTERNET - Used by the SDK to comunicate with the TQG API Server.
@@ -20,10 +12,10 @@ The following permissions are defined in the TQG SDK manifest, and are automatic
 
 From Android Marshmallow on, permissions for sensitive information access are asked during runtime, so you need to explicitly ask if you want to use them. TQG has methods to do this for you. See example below:
 
- ``` 
+ ```
  if (!TQGeoTracker.sharedInstance().isLocationNotAuthorized(this)) {
         TQGeoTracker.sharedInstance().askForLocationPermission(this);
- } 
+ }
  ```
 
 This will open a pop-up window asking for permission. The app should handle the permission changed event.
@@ -31,9 +23,7 @@ This will open a pop-up window asking for permission. The app should handle the 
 NOTE: The following methods don't need to be called to use the TQG, but you must ensure that the authorization has been allowed by the user:
 
 - ```askForLocationPermission```;
-- ```isLocationNotAuthorized```;
-- ```askForStoragePermission```;
-- ```isStorageAuthorized```.
+- ```isLocationNotAuthorized```.
 
 ### Google Play Services Dependencies
 
