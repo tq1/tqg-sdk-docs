@@ -2,9 +2,9 @@
 
 To start TQG SDK you must set the desired configuration preference:
 
- - APP_ID: The application identifier string. 
+ - APP_ID: The application identifier string.
  - TRIGGER_MODE (Optional): Can choose from 3 types of trigger mode - BOTH, LOCAL_ONLY, REMOTE_ONLY
- - ENVIRONMENT: The environment which the app will run -  PRODUCTION, STAGING, QA, DEVELOPMENT 
+ - ENVIRONMENT: The environment which the app will run -  PRODUCTION, STAGING, QA, DEVELOPMENT
 
 This configuration are set by calling the following methods:
 
@@ -116,4 +116,43 @@ Objective-C
 [[TQGeoTracker sharedInstance] getDeviceId];
 ```
 
+## Foreground Only mode
 
+From version 2.0.2 on, if you don't want to use location when the app is in background, follow these steps:
+
+- Add `Privacy - Location When In Use Usage Description` to your `Info.plist`. The value should be the string that will be shown to the user.
+
+- Change the `configure` method. Now instead of passing each arguments, you use a configuration dictionary, like in the following example:
+
+```objective-c
+NSDictionary *TQGConfiguration = @{@"appId": appid,
+                                   @"triggerMode": [NSNumber numberWithInt: TriggerModes.Both],
+                                   @"environment": [NSNumber numberWithInt: environment],
+                                   @"foregroundOnly": @true};
+
+
+[[TQGeoTracker sharedInstance] configure:TQGConfiguration];
+
+```
+
+Note the `foregroundOnly` key set to true.
+
+- The start should be done every time the app comes to foreground:
+
+```objective-c
+- (void)applicationWillEnterForeground:(UIApplication \*)application {
+    [[TQGeoTracker sharedInstance] start];
+}
+```
+
+You will notice that on the first time, it will ask location permission to be used only when in use
+
+- Stop TQG when app goes to background (iOS allows the use of location on background even if the permission is only when in use)
+
+```objective-c
+- (void)applicationWillResignActive:(UIApplication \*)application {
+    [[TQGeoTracker sharedInstance] stop];
+}
+```
+
+Notice that when you go to background, a blue bar will appear for a second saying the app is using the location on background, this happens because iOS is not able to stop the location tracker immediately before going to background.
