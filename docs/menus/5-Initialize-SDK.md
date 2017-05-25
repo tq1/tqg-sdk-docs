@@ -122,7 +122,7 @@ From version 2.0.2 on, if you don't want to use location when the app is in back
 
 - Add `Privacy - Location When In Use Usage Description` to your `Info.plist`. The value should be the string that will be shown to the user.
 
-- Change the `configure` method. Now instead of passing each arguments, you use a configuration dictionary, like in the following example:
+- Change the `configure` method. Now, instead of passing each argument, you use a configuration dictionary, like in the following example:
 
 ```objective-c
 NSDictionary *TQGConfiguration = @{@"appId": appid,
