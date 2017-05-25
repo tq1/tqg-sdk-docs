@@ -140,7 +140,7 @@ Note the `foregroundOnly` key set to true.
 - The start should be done every time the app comes to foreground:
 
 ```objective-c
-- (void)applicationWillEnterForeground:(UIApplication \*)application {
+- (void)applicationWillEnterForeground:(UIApplication *)application {
     [[TQGeoTracker sharedInstance] start];
 }
 ```
@@ -150,7 +150,7 @@ You will notice that on the first time, it will ask location permission to be us
 - Stop TQG when app goes to background (iOS allows the use of location on background even if the permission is only when in use)
 
 ```objective-c
-- (void)applicationWillResignActive:(UIApplication \*)application {
+- (void)applicationWillResignActive:(UIApplication *)application {
     [[TQGeoTracker sharedInstance] stop];
 }
 ```
